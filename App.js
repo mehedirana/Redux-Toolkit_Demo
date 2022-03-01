@@ -7,7 +7,6 @@
  */
 
 import React from 'react';
-import type {Node} from 'react';
 import {
   SafeAreaView,
   ScrollView,
@@ -18,7 +17,6 @@ import {
   useColorScheme,
   View,
 } from 'react-native';
-
 import {
   Colors,
   DebugInstructions,
@@ -26,8 +24,9 @@ import {
   LearnMoreLinks,
   ReloadInstructions,
 } from 'react-native/Libraries/NewAppScreen';
-
-
+import {Provider, useDispatch, useSelector} from 'react-redux';
+import {store} from './store/store';
+import {decrement, increment} from './store/counter/counterSlice';
 
 const App = () => {
   const isDarkMode = useColorScheme() === 'dark';
@@ -35,23 +34,45 @@ const App = () => {
   const backgroundStyle = {
     // backgroundColor: isDarkMode ? Colors.darker : Colors.lighter,
     backgroundColor: '#FFFFFF',
-    flex:1
+    flex: 1,
+  };
+
+  const count = useSelector(o => o.counter.value);
+  const dispatch = useDispatch();
+
+  const handleDown = () => {
+    dispatch(decrement());
+  };
+
+  const handleUp = () => {
+    dispatch(increment());
   };
 
   return (
-    <View style={backgroundStyle}>
-      <StatusBar barStyle={isDarkMode ? 'light-content' : 'dark-content'} />
-      <Text style={styles.title}>Tool Kit Demo</Text>
-      <View style={{flexDirection:'row', justifyContent:'space-between', marginHorizontal:40, alignItems:'center', marginTop:60}}>
-        <TouchableOpacity>
-          <Text style={[styles.title,{color:'black'}]}>-</Text>
-        </TouchableOpacity>
-        <Text style={[styles.title,{color:'black'}]}>Count : 00</Text>
-        <TouchableOpacity>
-          <Text style={[styles.title,{color:'black'}]}>+</Text>
-        </TouchableOpacity>
+    
+      <View style={backgroundStyle}>
+        <StatusBar barStyle={isDarkMode ? 'light-content' : 'dark-content'} />
+        <Text style={styles.title}>Tool Kit Demo</Text>
+        <View
+          style={{
+            flexDirection: 'row',
+            justifyContent: 'space-between',
+            marginHorizontal: 40,
+            alignItems: 'center',
+            marginTop: 60,
+          }}>
+          <TouchableOpacity onPress={handleDown}>
+            <Text style={[styles.title, {color: 'black'}]}>-</Text>
+          </TouchableOpacity>
+          <Text style={[styles.title, {color: 'black'}]}>
+            Count :{count ? count : '00'}
+          </Text>
+          <TouchableOpacity onPress={handleUp}>
+            <Text style={[styles.title, {color: 'black'}]}>+</Text>
+          </TouchableOpacity>
+        </View>
       </View>
-    </View>
+   
   );
 };
 
@@ -60,10 +81,12 @@ const styles = StyleSheet.create({
     marginTop: 32,
     paddingHorizontal: 24,
   },
-  title:{
-    textAlign:'center', color:'red', fontSize:22, marginTop:20
-  }
-
+  title: {
+    textAlign: 'center',
+    color: 'red',
+    fontSize: 22,
+    marginTop: 20,
+  },
 });
 
 export default App;
